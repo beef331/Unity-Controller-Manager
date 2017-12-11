@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System.IO;
+using System.Text;
 
 namespace Controller
 {
@@ -196,5 +198,92 @@ namespace Controller
             axisString.Add(InputAxis.LT, gamePad + "6");
 #endif
         }
+
+        /// <summary>
+        /// Switches axes so you can easily rebind axes using an ingame interface.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        public void SwitchAxes(InputAxis a, InputAxis b)
+        {
+            string temp = axisString[a];
+            axisString[a] = axisString[b];
+            axisString[b] = temp;
+        }
+
+        /// <summary>
+        /// Switches buttons so you can easily rebind controllers using an ingame interface.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        public void SwitchButtons(PressedButton a, PressedButton b)
+        {
+            KeyCode temp = pressedKeycode[a];
+            pressedKeycode[a] = pressedKeycode[b];
+            pressedKeycode[b] = temp;
+        }
+        
+        public void SaveCustomScheme(string path)
+        {
+            string outGoing = "";
+            PressedButton[] buttons = pressedKeycode.Keys.ToArray();
+            InputAxis[] axes = axisString.Keys.ToArray();
+            for(int i =0; i < buttons.Length; i++)
+            {
+                outGoing += buttons[i].ToString() + "=" + pressedKeycode[buttons[i]];
+                outGoing += System.Environment.NewLine;
+            }
+            for (int i = 0; i < axes.Length; i++)
+            {
+                outGoing += axes[i].ToString() + "=" + axisString[axes[i]];
+                outGoing += System.Environment.NewLine;
+            }
+            using (FileStream file = File.Create(path))
+            {
+                file.Write(Encoding.UTF8.GetBytes(outGoing), 0, outGoing.Length);
+
+            }
+        }
+
+        public void LoadCustomScheme(string path)
+        {
+            StreamReader reader = File.OpenText(path);
+            string line;
+            PressedButton parsedButton;
+            InputAxis parsedAxis;
+            while((line = reader.ReadLine()) != null)
+            {
+                string[] items = line.Split('=');
+                if (System.Enum.IsDefined(typeof(PressedButton), items[0]))
+                {
+                    parsedButton = (PressedButton)System.Enum.Parse(typeof(PressedButton), items[0]);
+                    if (!pressedKeycode.ContainsKey(parsedButton))
+                    {
+                        pressedKeycode.Add(parsedButton, (KeyCode)System.Enum.Parse(typeof(KeyCode), items[1]));
+                    }
+                    else
+                    {
+                        pressedKeycode[parsedButton] = (KeyCode)System.Enum.Parse(typeof(KeyCode), items[1]);
+                    }
+
+                    
+                }else if (System.Enum.IsDefined(typeof(InputAxis), items[0]))
+                {
+                    parsedAxis = (InputAxis)System.Enum.Parse(typeof(InputAxis), items[0]);
+                    if (!axisString.ContainsKey(parsedAxis))
+                    {
+                        axisString.Add(parsedAxis, items[1]);
+                    }
+                    else
+                    {
+                        axisString[parsedAxis] = items[1];
+                    }
+
+                }
+            }
+        }
+
+
+
     }
 }
