@@ -47,5 +47,6 @@ if(playerOne.GetAxis(InputAxis.LEFTX) > 0){
 ```
 ## Credits
 Programmed by : Jason Beetham
+
 Offered under reuse with The MIT license.
 
