@@ -39,6 +39,12 @@ After that Gamepad needs to be initialized with a integer between 1 and 4.
 //This will give playerOne the controller Unity identifies is the first
 GamePad playerOne = new GamePad(1)
 ```
+For each controller the inputs either need to be read from a file path, or defaulted using the ResetToDefault function.
+```
+//This will give set playerOne to default valies for your platform.
+playerOne.ResetToDefault();
+```
+
 Then input can easily be got similar to Unity's default Input.Get system. Just like Unity there are 3 states a button can be in and a function to easily get them(Up,Down,Stay).
 ```
 if(playerOne.GetAxis(InputAxis.LEFTX) > 0){
