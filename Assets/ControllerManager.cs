@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Linq;
 using System.IO;
 using System.Text;
+using System;
 
 namespace Controller
 {
@@ -19,8 +20,7 @@ namespace Controller
     {
         public int gamePadId = 1;
 
-        private Dictionary<PressedButton, KeyCode> pressedKeycode = new Dictionary<PressedButton, KeyCode>();
-        private Dictionary<InputAxis, string> axisString = new Dictionary<InputAxis, string>();
+        private Dictionary<Enum, object> mappedController = new Dictionary<Enum, object>();
 
 
 #if UNITY_STANDALONE_OSX
@@ -31,9 +31,13 @@ namespace Controller
         /// </summary>
         /// <param name="axis"></param>
         /// <returns></returns>
-        public float GetAxis(InputAxis axis)
+        public float GetAxis(Enum axis)
         {
-            return Input.GetAxis(axisString[axis]);
+			if (Enum.IsDefined(typeof(KeyCode), mappedController[axis]))
+			{
+				return Input.GetKey((KeyCode)Enum.Parse(typeof(KeyCode), mappedController[axis].ToString())) == true ?1:0;
+			}
+			return Input.GetAxis(mappedController[axis].ToString());
         }
 
         /// <summary>
@@ -41,30 +45,42 @@ namespace Controller
         /// </summary>
         /// <param name="button"></param>
         /// <returns></returns>
-        public bool GetButtonDown(PressedButton button)
+        public bool GetButtonDown(Enum button)
         {
-            return Input.GetKeyDown(pressedKeycode[button]);
-        }
+			if (Enum.IsDefined(typeof(KeyCode), mappedController[button]))
+			{
+				return Input.GetKeyDown((KeyCode)Enum.Parse(typeof(KeyCode), mappedController[button].ToString()));
+			}
+			return false;
+		}
 
         /// <summary>
         /// Supply a PressedButton and it will return a valueIdentical to the Unity Input Manager
         /// </summary>
         /// <param name="button"></param>
         /// <returns></returns>
-        public bool GetButtonUp(PressedButton button)
+        public bool GetButtonUp(Enum button)
         {
-            return Input.GetKeyUp(pressedKeycode[button]);
-        }
+			if (Enum.IsDefined(typeof(KeyCode), mappedController[button]))
+			{
+				return Input.GetKeyUp((KeyCode)Enum.Parse(typeof(KeyCode), mappedController[button].ToString()));
+			}
+			return false;
+		}
 
         /// <summary>
         /// Supply a PressedButton and it will return a valueIdentical to the Unity Input Manager
         /// </summary>
         /// <param name="button"></param>
         /// <returns></returns>
-        public bool GetButton(PressedButton button)
+        public bool GetButton(Enum button)
         {
-            return Input.GetKey(pressedKeycode[button]);
-        }
+			if (Enum.IsDefined(typeof(KeyCode), mappedController[button]))
+			{
+				return Input.GetKey((KeyCode)Enum.Parse(typeof(KeyCode), mappedController[button].ToString()));
+			}
+			return Mathf.Abs(Input.GetAxis(mappedController[button].ToString())) > 0;
+		}
 
         /// <summary>
         /// Checks if any button is pressed and returns the first found pressed
@@ -72,15 +88,18 @@ namespace Controller
         /// <returns></returns>
         public PressedButton AnyButtonPressed()
         {
-            PressedButton[] keys = pressedKeycode.Keys.ToArray();
-            for(int i =0; i < keys.Length; i++)
-            {
-                if (Input.GetKey(pressedKeycode[keys[i]]))
-                {
-                    return keys[i];
-                }
-            }
-            return PressedButton.UNDEFINED;
+			Enum[] keys = mappedController.Keys.ToArray();
+			for (int i = 0; i < keys.Length; i++)
+			{
+				if (Enum.IsDefined(typeof(PressedButton), keys[i]))
+				{
+					if (Input.GetKey((KeyCode)Enum.Parse(typeof(KeyCode), mappedController[keys[i]].ToString())))
+					{
+						return (PressedButton)Enum.Parse(typeof(PressedButton), keys[i].ToString());
+					}
+				}
+			}
+			return PressedButton.UNDEFINED;
         }
        
         /// <summary>
@@ -89,15 +108,18 @@ namespace Controller
         /// <returns></returns>
         public PressedButton AnyButtonReleased()
         {
-            PressedButton[] keys = pressedKeycode.Keys.ToArray();
-            for (int i = 0; i < keys.Length; i++)
-            {
-                if (Input.GetKeyUp(pressedKeycode[keys[i]]))
-                {
-                    return keys[i];
-                }
-            }
-            return PressedButton.UNDEFINED;
+			Enum[] keys = mappedController.Keys.ToArray();
+			for (int i = 0; i < keys.Length; i++)
+			{
+				if (Enum.IsDefined(typeof(PressedButton), keys[i]))
+				{
+					if (Input.GetKeyUp((KeyCode)Enum.Parse(typeof(KeyCode), mappedController[keys[i]].ToString())))
+					{
+						return (PressedButton)Enum.Parse(typeof(PressedButton), keys[i].ToString());
+					}
+				}
+			}
+			return PressedButton.UNDEFINED;
         }
        
         /// <summary>
@@ -106,15 +128,65 @@ namespace Controller
         /// <returns></returns>
         public PressedButton AnyButtonDown()
         {
-            PressedButton[] keys = pressedKeycode.Keys.ToArray();
+            Enum[] keys = mappedController.Keys.ToArray();
             for (int i = 0; i < keys.Length; i++)
             {
-                if (Input.GetKeyDown(pressedKeycode[keys[i]]))
-                {
-                    return keys[i];
-                }
+				if (Enum.IsDefined(typeof(PressedButton), keys[i]))
+				{
+					if (Input.GetKeyDown((KeyCode)Enum.Parse(typeof(KeyCode),mappedController[keys[i]].ToString())))
+					{
+						return (PressedButton)Enum.Parse(typeof(PressedButton),keys[i].ToString());
+					}
+				}
             }
             return PressedButton.UNDEFINED;
+        }
+
+        /// <summary>
+        /// Quick hand for checking if the right trigger has not been released
+        /// </summary>
+        /// <returns></returns>
+        public bool RightTrigger()
+        {
+			if (Enum.IsDefined(typeof(KeyCode), mappedController[InputAxis.RT]))
+			{
+				return Input.GetKey((KeyCode)Enum.Parse(typeof(KeyCode), mappedController[InputAxis.RT].ToString()));
+			}
+
+			return Input.GetAxis(mappedController[InputAxis.RT].ToString()) > 0;
+		}
+
+        /// <summary>
+        /// Quick hand for checking if the left trigger has not been released
+        /// </summary>
+        /// <returns></returns>
+        public bool LeftTrigger()
+        {
+			if (Enum.IsDefined(typeof(KeyCode), mappedController[InputAxis.LT]))
+			{
+				return Input.GetKey((KeyCode)Enum.Parse(typeof(KeyCode), mappedController[InputAxis.LT].ToString()));
+			}
+            return Input.GetAxis(mappedController[InputAxis.LT].ToString()) > 0;
+        }
+
+        /// <summary>
+        /// Checks if any axis is activated and returns the first found.
+        /// </summary>
+        /// <returns></returns>
+        public InputAxis AnyAxis()
+        {
+            Enum[] keys = mappedController.Keys.ToArray();
+            for (int i = 0; i < keys.Length; i++)
+            {
+				if (Enum.IsDefined(typeof(InputAxis), keys[i]))
+				{
+					if (Input.GetAxis(mappedController[keys[i]].ToString()) != 0 )
+					{
+						return (InputAxis) Enum.Parse(typeof(InputAxis),keys[i].ToString());
+					}
+				}
+            }
+            return InputAxis.UNDEFINED;
         }
 
         /// <summary>
@@ -129,113 +201,111 @@ namespace Controller
                 return;
             }
             gamePadId = controllerID;
-            string joystickButton = "Joystick" + controllerID.ToString() + "Button";
-            string gamePad = "Gamepad" + controllerID.ToString() + "A";
-#if UNITY_STANDALONE_WIN
-            pressedKeycode.Add(PressedButton.A, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "0"));
-            pressedKeycode.Add(PressedButton.B, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "1"));
-            pressedKeycode.Add(PressedButton.X, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "2"));
-            pressedKeycode.Add(PressedButton.Y, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "3"));
-            pressedKeycode.Add(PressedButton.LB, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "4"));
-            pressedKeycode.Add(PressedButton.RB, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "5"));
-            pressedKeycode.Add(PressedButton.BACK, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "6"));
-            pressedKeycode.Add(PressedButton.START, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "7"));
-            pressedKeycode.Add(PressedButton.LS, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "8"));
-            pressedKeycode.Add(PressedButton.RS, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "9"));
+        }
 
-            axisString.Add(InputAxis.LEFTX, gamePad + "X");
-            axisString.Add(InputAxis.LEFTY, gamePad + "Y");
-            axisString.Add(InputAxis.RIGHTX, gamePad + "4");
-            axisString.Add(InputAxis.RIGHTY, gamePad + "5");
-            axisString.Add(InputAxis.DPADX, gamePad + "6");
-            axisString.Add(InputAxis.DPADY, gamePad + "7");
-            axisString.Add(InputAxis.RT, gamePad + "9");
-            axisString.Add(InputAxis.LT, gamePad + "10");
+		/// <summary>
+		/// Sets all inputs to defaults for platform.
+		/// </summary>
+		public void ResetToDefault() {
+			mappedController.Clear();
+			string joystickButton = "Joystick" + gamePadId.ToString() + "Button";
+			string gamePad = "Gamepad" + gamePadId.ToString() + "A";
+#if UNITY_STANDALONE_WIN
+			mappedController.Add(PressedButton.A, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "0"));
+			mappedController.Add(PressedButton.B, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "1"));
+			mappedController.Add(PressedButton.X, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "2"));
+			mappedController.Add(PressedButton.Y, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "3"));
+			mappedController.Add(PressedButton.LB, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "4"));
+			mappedController.Add(PressedButton.RB, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "5"));
+			mappedController.Add(PressedButton.BACK, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "6"));
+			mappedController.Add(PressedButton.START, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "7"));
+			mappedController.Add(PressedButton.LS, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "8"));
+			mappedController.Add(PressedButton.RS, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "9"));
+
+			mappedController.Add(InputAxis.LEFTX, gamePad + "X");
+			mappedController.Add(InputAxis.LEFTY, gamePad + "Y");
+			mappedController.Add(InputAxis.RIGHTX, gamePad + "4");
+			mappedController.Add(InputAxis.RIGHTY, gamePad + "5");
+			mappedController.Add(InputAxis.DPADX, gamePad + "6");
+			mappedController.Add(InputAxis.DPADY, gamePad + "7");
+			mappedController.Add(InputAxis.RT, gamePad + "9");
+			mappedController.Add(InputAxis.LT, gamePad + "10");
 
 #endif
 #if UNITY_STANDALONE_LINUX
-            pressedKeycode.Add(PressedButton.A, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "0"));
-            pressedKeycode.Add(PressedButton.B, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "1"));
-            pressedKeycode.Add(PressedButton.X, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "2"));
-            pressedKeycode.Add(PressedButton.Y, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "3"));
-            pressedKeycode.Add(PressedButton.LB, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "4"));
-            pressedKeycode.Add(PressedButton.RB, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "5"));
-            pressedKeycode.Add(PressedButton.BACK, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "6"));
-            pressedKeycode.Add(PressedButton.START, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "7"));
-            pressedKeycode.Add(PressedButton.LS, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "9"));
-            pressedKeycode.Add(PressedButton.RS, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "10"));
+            mappedController.Add(PressedButton.A, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "0"));
+            mappedController.Add(PressedButton.B, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "1"));
+            mappedController.Add(PressedButton.X, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "2"));
+            mappedController.Add(PressedButton.Y, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "3"));
+            mappedController.Add(PressedButton.LB, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "4"));
+            mappedController.Add(PressedButton.RB, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "5"));
+            mappedController.Add(PressedButton.BACK, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "6"));
+            mappedController.Add(PressedButton.START, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "7"));
+            mappedController.Add(PressedButton.LS, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "9"));
+            mappedController.Add(PressedButton.RS, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "10"));
 
-            axisString.Add(InputAxis.LEFTX, gamePad + "X");
-            axisString.Add(InputAxis.LEFTY, gamePad + "Y");
-            axisString.Add(InputAxis.RIGHTX, gamePad + "4");
-            axisString.Add(InputAxis.RIGHTY, gamePad + "5");
-            axisString.Add(InputAxis.DPADX, gamePad + "7");
-            axisString.Add(InputAxis.DPADY, gamePad + "8");
-            axisString.Add(InputAxis.RT, gamePad + "3");
-            axisString.Add(InputAxis.LT, gamePad + "6");
+            mappedController.Add(InputAxis.LEFTX, gamePad + "X");
+            mappedController.Add(InputAxis.LEFTY, gamePad + "Y");
+            mappedController.Add(InputAxis.RIGHTX, gamePad + "4");
+            mappedController.Add(InputAxis.RIGHTY, gamePad + "5");
+            mappedController.Add(InputAxis.DPADX, gamePad + "7");
+            mappedController.Add(InputAxis.DPADY, gamePad + "8");
+            mappedController.Add(InputAxis.RT, gamePad + "3");
+            mappedController.Add(InputAxis.LT, gamePad + "6");
 #endif
 #if UNITY_STANDALONE_MAC
-            pressedKeycode.Add(PressedButton.A, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "16"));
-            pressedKeycode.Add(PressedButton.B, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "17"));
-            pressedKeycode.Add(PressedButton.X, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "18"));
-            pressedKeycode.Add(PressedButton.Y, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "19"));
-            pressedKeycode.Add(PressedButton.LB, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "13"));
-            pressedKeycode.Add(PressedButton.RB, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "14"));
-            pressedKeycode.Add(PressedButton.BACK, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "10"));
-            pressedKeycode.Add(PressedButton.START, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "9"));
-            pressedKeycode.Add(PressedButton.LS, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "11"));
-            pressedKeycode.Add(PressedButton.RS, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "12"));
-            pressedKeycode.Add(PressedButton.LS, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "5"));
-            pressedKeycode.Add(PressedButton.RS, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "6"));
-            pressedKeycode.Add(PressedButton.LS, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "7"));
-            pressedKeycode.Add(PressedButton.RS, (KeyCode)System.Enum.Parse(typeof(KeyCode), joystickButton + "8"));
+            mappedController.Add(PressedButton.A, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "16"));
+            mappedController.Add(PressedButton.B, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "17"));
+            mappedController.Add(PressedButton.X, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "18"));
+            mappedController.Add(PressedButton.Y, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "19"));
+            mappedController.Add(PressedButton.LB, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "13"));
+            mappedController.Add(PressedButton.RB, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "14"));
+            mappedController.Add(PressedButton.BACK, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "10"));
+            mappedController.Add(PressedButton.START, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "9"));
+            mappedController.Add(PressedButton.LS, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "11"));
+            mappedController.Add(PressedButton.RS, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "12"));
+            mappedController.Add(PressedButton.LS, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "5"));
+            mappedController.Add(PressedButton.RS, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "6"));
+            mappedController.Add(PressedButton.LS, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "7"));
+            mappedController.Add(PressedButton.RS, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "8"));
 
-            axisString.Add(InputAxis.LEFTX, gamePad + "X");
-            axisString.Add(InputAxis.LEFTY, gamePad + "Y");
-            axisString.Add(InputAxis.RIGHTX, gamePad + "3");
-            axisString.Add(InputAxis.RIGHTY, gamePad + "4");
-            axisString.Add(InputAxis.RT, gamePad + "5");
-            axisString.Add(InputAxis.LT, gamePad + "6");
+            mappedController.Add(InputAxis.LEFTX, gamePad + "X");
+            mappedController.Add(InputAxis.LEFTY, gamePad + "Y");
+            mappedController.Add(InputAxis.RIGHTX, gamePad + "3");
+            mappedController.Add(InputAxis.RIGHTY, gamePad + "4");
+            mappedController.Add(InputAxis.RT, gamePad + "5");
+            mappedController.Add(InputAxis.LT, gamePad + "6");
 #endif
-        }
 
-        /// <summary>
-        /// Switches axes so you can easily rebind axes using an ingame interface.
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
-        public void SwitchAxes(InputAxis a, InputAxis b)
-        {
-            string temp = axisString[a];
-            axisString[a] = axisString[b];
-            axisString[b] = temp;
-        }
 
-        /// <summary>
-        /// Switches buttons so you can easily rebind controllers using an ingame interface.
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
-        public void SwitchButtons(PressedButton a, PressedButton b)
+
+
+
+		}
+
+		/// <summary>
+		/// Switches two item inputs either an axis or a button. Note axes only work for GetButton and GetAxis. Buttons only return 1 or 0 in GetAxis
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		public void SwitchInputs(Enum a, Enum b)
         {
-            KeyCode temp = pressedKeycode[a];
-            pressedKeycode[a] = pressedKeycode[b];
-            pressedKeycode[b] = temp;
+            object temp = mappedController[a];
+            mappedController[a] = mappedController[b];
+            mappedController[b] = temp;
         }
         
+        /// <summary>
+        /// Saves to the path with the name provided
+        /// </summary>
+        /// <param name="path"></param>
         public void SaveCustomScheme(string path)
         {
             string outGoing = "";
-            PressedButton[] buttons = pressedKeycode.Keys.ToArray();
-            InputAxis[] axes = axisString.Keys.ToArray();
+            Enum[] buttons = mappedController.Keys.ToArray();
             for(int i =0; i < buttons.Length; i++)
             {
-                outGoing += buttons[i].ToString() + "=" + pressedKeycode[buttons[i]];
-                outGoing += System.Environment.NewLine;
-            }
-            for (int i = 0; i < axes.Length; i++)
-            {
-                outGoing += axes[i].ToString() + "=" + axisString[axes[i]];
+                outGoing += buttons[i].ToString() + "=" + mappedController[buttons[i]];
                 outGoing += System.Environment.NewLine;
             }
             using (FileStream file = File.Create(path))
@@ -245,6 +315,10 @@ namespace Controller
             }
         }
 
+        /// <summary>
+        /// Loads from the path with name provided
+        /// </summary>
+        /// <param name="path"></param>
         public void LoadCustomScheme(string path)
         {
             StreamReader reader = File.OpenText(path);
@@ -254,31 +328,28 @@ namespace Controller
             while((line = reader.ReadLine()) != null)
             {
                 string[] items = line.Split('=');
-                if (System.Enum.IsDefined(typeof(PressedButton), items[0]))
+                if (Enum.IsDefined(typeof(PressedButton), items[0]))
                 {
-                    parsedButton = (PressedButton)System.Enum.Parse(typeof(PressedButton), items[0]);
-                    if (!pressedKeycode.ContainsKey(parsedButton))
+                    parsedButton = (PressedButton)Enum.Parse(typeof(PressedButton), items[0]);
+                    if (!mappedController.ContainsKey(parsedButton))
                     {
-                        pressedKeycode.Add(parsedButton, (KeyCode)System.Enum.Parse(typeof(KeyCode), items[1]));
+                        mappedController.Add(parsedButton, (KeyCode)Enum.Parse(typeof(KeyCode), items[1]));
                     }
                     else
                     {
-                        pressedKeycode[parsedButton] = (KeyCode)System.Enum.Parse(typeof(KeyCode), items[1]);
+                        mappedController[parsedButton] = (KeyCode)Enum.Parse(typeof(KeyCode), items[1]);
                     }
-
-                    
-                }else if (System.Enum.IsDefined(typeof(InputAxis), items[0]))
+                }else if (Enum.IsDefined(typeof(InputAxis), items[0]))
                 {
-                    parsedAxis = (InputAxis)System.Enum.Parse(typeof(InputAxis), items[0]);
-                    if (!axisString.ContainsKey(parsedAxis))
+                    parsedAxis = (InputAxis)Enum.Parse(typeof(InputAxis), items[0]);
+                    if (!mappedController.ContainsKey(parsedAxis))
                     {
-                        axisString.Add(parsedAxis, items[1]);
+                        mappedController.Add(parsedAxis, items[1]);
                     }
                     else
                     {
-                        axisString[parsedAxis] = items[1];
+                        mappedController[parsedAxis] = items[1];
                     }
-
                 }
             }
         }

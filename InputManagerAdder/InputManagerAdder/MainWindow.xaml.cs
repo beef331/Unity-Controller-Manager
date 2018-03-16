@@ -38,18 +38,18 @@ namespace InputManagerAdder
                         bytes[i] = (byte)fs.ReadByte();
                     }
                     File.WriteAllBytes(Directory.GetCurrentDirectory() + "/InputManagerBackup.asset", bytes);
-                }
+				}
             }
             if (!replace)
             {
-                string addText = Encoding.ASCII.GetString(global::InputManagerAdder.Properties.Resources.InputManager);
-                File.AppendAllText(Directory.GetCurrentDirectory() + "/InputManager.asset", DeleteLines(addText,7));
-                MessageBoxResult result = MessageBox.Show("You have added the controller inputs.");
-                if(result == MessageBoxResult.OK)
-                {
-                    Application.Current.Shutdown();
-                }
-            }
+				string addText = Encoding.ASCII.GetString(global::InputManagerAdder.Properties.Resources.InputManager);
+				File.AppendAllText(Directory.GetCurrentDirectory() + "/InputManager.asset", DeleteLines(addText, 7));
+				MessageBoxResult result = MessageBox.Show("You have added the controller inputs.");
+				if (result == MessageBoxResult.OK)
+				{
+					Application.Current.Shutdown();
+				}
+			}
             else
             {
                 using (FileStream fs = File.Create(Directory.GetCurrentDirectory() + "/InputManager.asset"))

@@ -32,12 +32,9 @@ public class ControllerTest : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-        Vector3 leftStick = new Vector3(playerOne.GetAxis(InputAxis.LEFTX), playerOne.GetAxis(InputAxis.LEFTY), playerOne.GetAxis(InputAxis.LT) - playerOne.GetAxis(InputAxis.RT));
+        Vector3 leftStick = new Vector3(playerOne.GetAxis(InputAxis.LEFTX), -playerOne.GetAxis(InputAxis.LEFTY), (playerOne.LeftTrigger() ? 1 : 0) - (playerOne.RightTrigger() ? 1 : 0));
         Vector3 rightStick = new Vector3(-playerOne.GetAxis(InputAxis.RIGHTY), 0, -playerOne.GetAxis(InputAxis.RIGHTX));
         Vector2 dPad = new Vector2(playerOne.GetAxis(InputAxis.DPADX), playerOne.GetAxis(InputAxis.DPADY));
-
-
 
         modifiedObject.Translate(leftStick * 10 * Time.deltaTime, Space.World);
         modifiedObject.Rotate(rightStick, 100 * Time.deltaTime, Space.World);
@@ -89,33 +86,32 @@ public class ControllerTest : MonoBehaviour
             mat.color = Color.yellow;
         }
 
-        if (playerOne.GetButtonDown(PressedButton.RB))
+        if (playerOne.GetButton(InputAxis.LT))
         {
-            modifiedObject.localScale *= 2;
+            modifiedObject.localScale += 2 * Time.deltaTime * Vector3.one;
         }
 
-        if (playerOne.GetButtonDown(PressedButton.LB))
+        if (playerOne.GetButton(InputAxis.RT))
         {
-            modifiedObject.localScale /= 2;
+            modifiedObject.localScale -= 2 * Time.deltaTime * Vector3.one;
         }
 
         if (playerOne.GetButtonDown(PressedButton.LS))
         {
-            playerOne.SwitchButtons(PressedButton.A, PressedButton.B);
+            playerOne.SwitchInputs(InputAxis.RT, PressedButton.B);
             playerOne.SaveCustomScheme(Application.dataPath + "/PlayerOneControl");
         }
 
         if (playerOne.GetButtonDown(PressedButton.RS))
         {
-            playerOne.SwitchAxes(InputAxis.LEFTX, InputAxis.RIGHTX);
-            playerOne.SwitchAxes(InputAxis.LEFTY, InputAxis.RIGHTY);
+            playerOne.SwitchInputs(InputAxis.LEFTX, InputAxis.RIGHTX);
+            playerOne.SwitchInputs(InputAxis.LEFTY, InputAxis.RIGHTY);
             playerOne.SaveCustomScheme(Application.dataPath + "/PlayerOneControl");
         }
-
-
-
-
-
+		if (playerOne.GetButtonDown(PressedButton.START))
+		{
+			playerOne.ResetToDefault();
+		}
 
     }
 }

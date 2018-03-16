@@ -13,3 +13,18 @@ D:\WPF For Input manager\InputManagerAdder\InputManagerAdder\obj\Release\InputMa
 D:\WPF For Input manager\InputManagerAdder\InputManagerAdder\obj\Release\InputManagerAdder.exe
 D:\WPF For Input manager\InputManagerAdder\InputManagerAdder\obj\Release\InputManagerAdder.pdb
 D:\WPF For Input manager\InputManagerAdder\InputManagerAdder\obj\Release\InputManagerAdder.csprojResolveAssemblyReference.cache
+D:\Unity-Controller-Manager\InputManagerAdder\InputManagerAdder\bin\Release\InputManagerAdder.exe.config
+D:\Unity-Controller-Manager\InputManagerAdder\InputManagerAdder\bin\Release\InputManagerAdder.exe
+D:\Unity-Controller-Manager\InputManagerAdder\InputManagerAdder\bin\Release\InputManagerAdder.pdb
+D:\Unity-Controller-Manager\InputManagerAdder\InputManagerAdder\obj\Release\InputManagerAdder.csprojResolveAssemblyReference.cache
+D:\Unity-Controller-Manager\InputManagerAdder\InputManagerAdder\obj\Release\MainWindow.g.cs
+D:\Unity-Controller-Manager\InputManagerAdder\InputManagerAdder\obj\Release\App.g.cs
+D:\Unity-Controller-Manager\InputManagerAdder\InputManagerAdder\obj\Release\InputManagerAdder_MarkupCompile.cache
+D:\Unity-Controller-Manager\InputManagerAdder\InputManagerAdder\obj\Release\InputManagerAdder_MarkupCompile.lref
+D:\Unity-Controller-Manager\InputManagerAdder\InputManagerAdder\obj\Release\MainWindow.baml
+D:\Unity-Controller-Manager\InputManagerAdder\InputManagerAdder\obj\Release\InputManagerAdder.g.resources
+D:\Unity-Controller-Manager\InputManagerAdder\InputManagerAdder\obj\Release\InputManagerAdder.Properties.Resources.resources
+D:\Unity-Controller-Manager\InputManagerAdder\InputManagerAdder\obj\Release\InputManagerAdder.csproj.GenerateResource.Cache
+D:\Unity-Controller-Manager\InputManagerAdder\InputManagerAdder\obj\Release\InputManagerAdder.csproj.CoreCompileInputs.cache
+D:\Unity-Controller-Manager\InputManagerAdder\InputManagerAdder\obj\Release\InputManagerAdder.exe
+D:\Unity-Controller-Manager\InputManagerAdder\InputManagerAdder\obj\Release\InputManagerAdder.pdb
