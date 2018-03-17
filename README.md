@@ -26,7 +26,7 @@ InputManager:
   serializedVersion: 2
   m_Axes:
 ```
-and paste it at the bottom of the Unity Projects' InputManager.cs.
+and paste it at the bottom of the Unity Projects' InputManager.asset.
 Finally add the "ControllerManager.cs" file to the desired Unity project. The project is ready for controller support.
 
 #### Coding Doccumentation
