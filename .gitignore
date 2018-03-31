@@ -2,6 +2,9 @@
 Library/
 Temp/
 Temp.meta
+.vs/
+ProjectSettings/
+UnityPackageManager/
 
 # Autosaves
 *auto_*
