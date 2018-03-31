@@ -18,6 +18,7 @@ UnityPackageManager/
 *.userprefs
 *.pidb
 *.swp
+*.meta
 
 # Mac punk
 .DS_Store
