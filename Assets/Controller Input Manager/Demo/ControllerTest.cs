@@ -23,7 +23,7 @@ public class ControllerTest : MonoBehaviour
     void Start()
     {
         playerOne = new Gamepad(1);
-        playerOne.LoadCustomScheme(Application.dataPath + "/PlayerOneControl");
+        playerOne.LoadCustomScheme(Application.dataPath + "/Controller Input Manager/Demo/PlayerOneControl");
         mf = modifiedObject.GetComponent<MeshFilter>();
         mat = modifiedObject.GetComponent<MeshRenderer>().material;
         cam = Camera.main;
@@ -99,14 +99,14 @@ public class ControllerTest : MonoBehaviour
         if (playerOne.GetButtonDown(PressedButton.LS))
         {
             playerOne.SwitchInputs(InputAxis.RT, PressedButton.B);
-            playerOne.SaveCustomScheme(Application.dataPath + "/PlayerOneControl");
+            playerOne.SaveCustomScheme(Application.dataPath + "/Controller Input Manager/Demo/PlayerOneControl");
         }
 
         if (playerOne.GetButtonDown(PressedButton.RS))
         {
             playerOne.SwitchInputs(InputAxis.LEFTX, InputAxis.RIGHTX);
             playerOne.SwitchInputs(InputAxis.LEFTY, InputAxis.RIGHTY);
-            playerOne.SaveCustomScheme(Application.dataPath + "/PlayerOneControl");
+            playerOne.SaveCustomScheme(Application.dataPath + "/Controller Input Manager/Demo/PlayerOneControl");
         }
 		if (playerOne.GetButtonDown(PressedButton.START))
 		{
