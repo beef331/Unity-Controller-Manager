@@ -41,7 +41,7 @@ GamePad playerOne = new GamePad(1)
 ```
 For each controller the inputs either need to be read from a file path, or defaulted using the ResetToDefault function.
 ```
-//This will give set playerOne to default valies for your platform.
+//This will give set playerOne to default values for your platform.
 playerOne.ResetToDefault();
 ```
 
