@@ -3,7 +3,7 @@ This is an attempt at a good Unity Controller Input Manager using the default Un
 ```diff
 +Windows(Tested)
 -Mac(Untested)
--Linux(Untested)
++Linux(Tested)
 ```
 ## How to use
 Included is a tool for Windows that automates  adding the controller inputs that ControllerManager.cs has hardcoded in. This makes it easy to add controller support to any project. If not on a Windows platform one would either have to add them in the inspector of Unity or copy and paste the InputManager.asset file data from the resource folder into their own InputManager.
