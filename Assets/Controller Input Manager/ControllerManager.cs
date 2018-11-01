@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
@@ -91,7 +91,7 @@ namespace Controller
 			Enum[] keys = mappedController.Keys.ToArray();
 			for (int i = 0; i < keys.Length; i++)
 			{
-				if (Enum.IsDefined(typeof(PressedButton), keys[i]))
+				if (Enum.IsDefined(typeof(PressedButton), keys[i].ToString()))
 				{
 					if (Input.GetKey((KeyCode)Enum.Parse(typeof(KeyCode), mappedController[keys[i]].ToString())))
 					{
@@ -111,7 +111,7 @@ namespace Controller
 			Enum[] keys = mappedController.Keys.ToArray();
 			for (int i = 0; i < keys.Length; i++)
 			{
-				if (Enum.IsDefined(typeof(PressedButton), keys[i]))
+				if (Enum.IsDefined(typeof(PressedButton), keys[i].ToString()))
 				{
 					if (Input.GetKeyUp((KeyCode)Enum.Parse(typeof(KeyCode), mappedController[keys[i]].ToString())))
 					{
@@ -131,7 +131,7 @@ namespace Controller
             Enum[] keys = mappedController.Keys.ToArray();
             for (int i = 0; i < keys.Length; i++)
             {
-				if (Enum.IsDefined(typeof(PressedButton), keys[i]))
+				if (Enum.IsDefined(typeof(PressedButton), keys[i].ToString()))
 				{
 					if (Input.GetKeyDown((KeyCode)Enum.Parse(typeof(KeyCode),mappedController[keys[i]].ToString())))
 					{
@@ -178,7 +178,7 @@ namespace Controller
             Enum[] keys = mappedController.Keys.ToArray();
             for (int i = 0; i < keys.Length; i++)
             {
-				if (Enum.IsDefined(typeof(InputAxis), keys[i]))
+				if (Enum.IsDefined(typeof(InputAxis), keys[i].ToString()))
 				{
 					if (Input.GetAxis(mappedController[keys[i]].ToString()) != 0 )
 					{
@@ -210,29 +210,7 @@ namespace Controller
 			mappedController.Clear();
 			string joystickButton = "Joystick" + gamePadId.ToString() + "Button";
 			string gamePad = "Gamepad" + gamePadId.ToString() + "A";
-#if UNITY_STANDALONE_WIN
-			mappedController.Add(PressedButton.A, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "0"));
-			mappedController.Add(PressedButton.B, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "1"));
-			mappedController.Add(PressedButton.X, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "2"));
-			mappedController.Add(PressedButton.Y, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "3"));
-			mappedController.Add(PressedButton.LB, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "4"));
-			mappedController.Add(PressedButton.RB, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "5"));
-			mappedController.Add(PressedButton.BACK, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "6"));
-			mappedController.Add(PressedButton.START, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "7"));
-			mappedController.Add(PressedButton.LS, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "8"));
-			mappedController.Add(PressedButton.RS, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "9"));
-
-			mappedController.Add(InputAxis.LEFTX, gamePad + "X");
-			mappedController.Add(InputAxis.LEFTY, gamePad + "Y");
-			mappedController.Add(InputAxis.RIGHTX, gamePad + "4");
-			mappedController.Add(InputAxis.RIGHTY, gamePad + "5");
-			mappedController.Add(InputAxis.DPADX, gamePad + "6");
-			mappedController.Add(InputAxis.DPADY, gamePad + "7");
-			mappedController.Add(InputAxis.RT, gamePad + "9");
-			mappedController.Add(InputAxis.LT, gamePad + "10");
-
-#endif
-#if UNITY_STANDALONE_LINUX
+#if UNITY_STANDALONE_LINUX || UNITY_EDITOR_LINUX
             mappedController.Add(PressedButton.A, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "0"));
             mappedController.Add(PressedButton.B, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "1"));
             mappedController.Add(PressedButton.X, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "2"));
@@ -252,8 +230,27 @@ namespace Controller
             mappedController.Add(InputAxis.DPADY, gamePad + "8");
             mappedController.Add(InputAxis.RT, gamePad + "3");
             mappedController.Add(InputAxis.LT, gamePad + "6");
-#endif
-#if UNITY_STANDALONE_MAC
+#elif UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+			mappedController.Add(PressedButton.A, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "0"));
+			mappedController.Add(PressedButton.B, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "1"));
+			mappedController.Add(PressedButton.X, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "2"));
+			mappedController.Add(PressedButton.Y, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "3"));
+			mappedController.Add(PressedButton.LB, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "4"));
+			mappedController.Add(PressedButton.RB, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "5"));
+			mappedController.Add(PressedButton.BACK, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "6"));
+			mappedController.Add(PressedButton.START, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "7"));
+			mappedController.Add(PressedButton.LS, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "8"));
+			mappedController.Add(PressedButton.RS, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "9"));
+
+			mappedController.Add(InputAxis.LEFTX, gamePad + "X");
+			mappedController.Add(InputAxis.LEFTY, gamePad + "Y");
+			mappedController.Add(InputAxis.RIGHTX, gamePad + "4");
+			mappedController.Add(InputAxis.RIGHTY, gamePad + "5");
+			mappedController.Add(InputAxis.DPADX, gamePad + "6");
+			mappedController.Add(InputAxis.DPADY, gamePad + "7");
+			mappedController.Add(InputAxis.RT, gamePad + "9");
+			mappedController.Add(InputAxis.LT, gamePad + "10");
+#elif UNITY_STANDALONE_MAC || UNITY_EDITOR_MAC
             mappedController.Add(PressedButton.A, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "16"));
             mappedController.Add(PressedButton.B, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "17"));
             mappedController.Add(PressedButton.X, (KeyCode)Enum.Parse(typeof(KeyCode), joystickButton + "18"));
@@ -313,6 +310,21 @@ namespace Controller
                 file.Write(Encoding.UTF8.GetBytes(outGoing), 0, outGoing.Length);
 
             }
+        }
+
+        /// <summary>
+        /// Checks all controllers on default scheme to see if there are any active(buttons pressed or axes moved).static Returns 1-4 if there is an active controller and 0 if not.
+        /// </summary>
+        /// <returns></returns>
+        public static int GetAnyActiveController(){
+            for(int i =1; i <= 4;i++){
+                Gamepad gp = new Gamepad(i);
+                gp.ResetToDefault();
+                if(gp.AnyAxis() != InputAxis.UNDEFINED || gp.AnyButtonDown() != PressedButton.UNDEFINED || gp.AnyButtonPressed() != PressedButton.UNDEFINED || gp.AnyButtonReleased()!= PressedButton.UNDEFINED){
+                    return i;
+                }
+            }
+            return 0;
         }
 
         /// <summary>
