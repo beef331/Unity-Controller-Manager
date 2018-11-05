@@ -12,11 +12,7 @@ After building the WPF application from the InputManagerAdder, simply drop the .
 Finally add the "ControllerManager.cs" file to the desired Unity project. The project is ready for controller support.
 
 #### Other Platforms
-Go to 
-```
-InputManagerAdder/InputManagerAdder/Resources
-```
-and open up InputManager.asset in your favourite text editor. Then go to the ProjectSettings folder in the project root directory. Open up the InputManager.asset and either replace it completely, or if you desire to keep old InputAxes skip copying
+Open up InputManager.asset in your favourite text editor. Then go to the ProjectSettings folder in the project root directory. Open up the InputManager.asset and either replace it completely, or if you desire to keep old InputAxes skip copying
 ```
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
