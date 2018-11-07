@@ -1,5 +1,5 @@
 # Unity-Controller-Manager
-This is an attempt at a good Unity Controller Input Manager using the default Unity Input Manager. Currently it is setup to easily assign up to four controllers for
+This is an attempt at a good Unity Controller Input Manager using the default Unity Input Manager. Currently it is setup to easily assign up to four XInput controllers for
 ```diff
 +Windows(Tested)
 -Mac(Untested)
